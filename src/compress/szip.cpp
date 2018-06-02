@@ -7,8 +7,8 @@
 
 #include <zlib.h>
 
-#include "../../utils/bitmanip.h"
-#include "../../io/filesystem.h"
+#include "../utils/bitmanip.h"
+#include "../io/filesystem.h"
 
 #ifdef _MSC_VER
     #pragma comment(lib, "zlib.lib")
@@ -27,7 +27,7 @@ int Szip::compressBytes(unsigned char* input, size_t len, vector<unsigned char>&
     unsigned long output_len = compressBound((unsigned long)len);
     unsigned char* buffer = new unsigned char[output_len];
 
-    int result = compress(buffer, &output_len, input, (unsigned long)len);
+    int result = ::compress(buffer, &output_len, input, (unsigned long)len);
     if (result != Z_OK)
     {
         delete[] buffer;
@@ -52,7 +52,7 @@ int Szip::uncompressBytes(unsigned char* input, size_t len, vector<unsigned char
     unsigned long output_len = (unsigned long)len * 10;
     unsigned char* buffer = new unsigned char[output_len];
 
-    int result = uncompress(buffer, &output_len, input, (unsigned long)len);
+    int result = ::uncompress(buffer, &output_len, input, (unsigned long)len);
 
     if (result == Z_DATA_ERROR)
     {
@@ -67,7 +67,7 @@ int Szip::uncompressBytes(unsigned char* input, size_t len, vector<unsigned char
         delete[] buffer;
         buffer = new unsigned char[output_len];
 
-        result = uncompress(buffer, &output_len, input, (unsigned long)len);
+        result = ::uncompress(buffer, &output_len, input, (unsigned long)len);
     }
 
     if (result != Z_OK)
@@ -112,10 +112,10 @@ int Szip::zip(const string& sourceDirOrFileName, const string& outputFilename)
         readFile(sourceDirOrFileName, "", buffer, pos);
     }
 
-    unsigned long output_len = compressBound((unsigned long)pos);
+    unsigned long output_len = ::compressBound((unsigned long)pos);
     unsigned char* compressed = new unsigned char[output_len];
 
-    int result = compress(compressed, &output_len, buffer, (unsigned long)pos);
+    int result = ::compress(compressed, &output_len, buffer, (unsigned long)pos);
     if (result != Z_OK)
     {
         delete[] buffer;
@@ -153,7 +153,7 @@ int Szip::unzip(const string& szipFilename, const string& outputPath)
 
     unsigned long output_len = (unsigned long)len * 10;
     unsigned char* buffer = new unsigned char[output_len];
-    int result = uncompress(buffer, &output_len, data + 2, (unsigned long)len - 2);
+    int result = ::uncompress(buffer, &output_len, data + 2, (unsigned long)len - 2);
 
     if (result == Z_DATA_ERROR)
     {
@@ -169,7 +169,7 @@ int Szip::unzip(const string& szipFilename, const string& outputPath)
         delete[] buffer;
         buffer = new unsigned char[output_len];
 
-        result = uncompress(buffer, &output_len, data + 2, (unsigned long)len - 2);
+        result = ::uncompress(buffer, &output_len, data + 2, (unsigned long)len - 2);
     }
 
     delete[] data;
