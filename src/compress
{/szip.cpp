@@ -1,4 +1,4 @@
-#include "../szip/szip.h"
+#include "szip.h"
 
 #include <cassert>
 #include <iostream>

@@ -7,7 +7,6 @@ using namespace std;
 
 namespace shove
 {
-
 namespace compress
 {
 
