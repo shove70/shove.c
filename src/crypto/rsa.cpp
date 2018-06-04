@@ -6,7 +6,7 @@
 
 #include "../utils/random.h"
 #include "../encode/base64.h"
-#include "tea/xtea.h"
+#include "tea.h"
 #include "common.h"
 
 using namespace shove::utils;

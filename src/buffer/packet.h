@@ -10,7 +10,7 @@
 #include "../hash/md5.h"
 #include "../crypto/aes.h"
 #include "../crypto/rsa.h"
-#include "../crypto/tea/xtea.h"
+#include "../crypto/tea.h"
 
 using namespace std;
 using namespace shove::utils;
