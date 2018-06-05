@@ -9,6 +9,7 @@
 #else
     #include <unistd.h>
     #include <netdb.h>
+    #include <signal.h>
     #include <sys/socket.h>
     #include <sys/select.h>
     #include <sys/time.h>
