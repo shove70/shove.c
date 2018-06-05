@@ -73,7 +73,7 @@ static const char *str_pin[] = {
     "zhuai", "zhuan", "zhuang", "zhui", "zhun", "zhuo", "zi", "zong", "zou", "zu", "zuan", "zui", "zun", "zuo" };
 
 const char* get_pinyin(unsigned short char_zh);
-string str_to_pin_space(string const &input, bool isLetteryEnd = false);
+string chineseToPinyin(string const &input, bool isLetteryEnd = false);
 
 }
 }
