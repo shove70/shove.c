@@ -110,5 +110,7 @@ string byteToStr_hex(ubyte*, size_t);
 string rsaEncrypt(const string& key, const string& data);
 string rsaDecrypt(const string& key, const string& data);
 
+string fileMD5(const string& filename);
+
 }
 }

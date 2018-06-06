@@ -422,6 +422,12 @@ string rsaDecrypt(const string& key, const string& data)
     return ret;
 }
 
+string fileMD5(const string& filename)
+{
+    std::string data = readFile(filename);
+
+    return shove::hash::MD5Utils.GenerateMD5((unsigned char*)data.c_str(), data.size());
+}
 
 }
 }
