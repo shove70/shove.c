@@ -5,7 +5,13 @@
 #include "socket.h"
 
 #ifdef _MSC_VER
-    #pragma comment(lib, "ws2_32.lib")
+#ifndef _CRT_SECURE_NO_WARNINGS
+#define _CRT_SECURE_NO_WARNINGS
+#endif
+#ifndef _WINSOCK_DEPRECATED_NO_WARNINGS
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
+#endif
+#pragma comment(lib, "ws2_32.lib")
 #endif
 
 namespace shove
