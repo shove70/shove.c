@@ -1,5 +1,6 @@
 #include <iconv.h>
 #include <stdlib.h>
+#include <memory.h>
 
 #include "charset.h"
 
@@ -77,7 +78,7 @@ wstring Charset::utf2uni(const char* src, wstring& t)
     wchar_t *des = new wchar_t[size_d];
     memset(des, 0, size_d * sizeof(wchar_t));
 
-    int s = 0, d = 0;
+    size_t s = 0, d = 0;
 
     while (s  < size_s && d  < size_d)
     {
@@ -131,7 +132,11 @@ wstring Charset::utf2uni(const char* src, wstring& t)
     }
 
     t = des;
-    if (des != NULL)    delete[] des;   des = NULL;
+    if (des != NULL)
+    {
+        delete[] des;
+        des = NULL;
+    }
 
     return t;
 }
