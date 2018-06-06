@@ -26,6 +26,8 @@
 #include "utils.h"
 
 using namespace shove::io;
+using namespace shove::crypto;
+using namespace shove::encode;
 
 namespace shove
 {
@@ -392,6 +394,34 @@ string byteToStr_hex(ubyte* input, size_t len)
 
     return ret;
 }
+
+string rsaEncrypt(const string& key, const string& data)
+{
+    unsigned char* buf = new unsigned char[data.size() * 2 + key.size()];
+    unsigned char* p = (unsigned char*)data.c_str();
+    size_t len = RSA::encrypt(key, p, data.size(), buf, true);
+
+    string ret = Base64::encode(buf, len);
+    delete[] buf;
+
+    return ret;
+}
+
+string rsaDecrypt(const string& key, const string& data)
+{
+    unsigned char* buf = new unsigned char[data.size() * 2];
+    size_t len = Base64::decode(data, buf);
+
+    unsigned char* buf2 = new unsigned char[len * 2 + key.size()];
+    len = RSA::decrypt(key, buf, len, buf2, true);
+
+    string ret((char*)buf2, len);
+    delete[] buf;
+    delete[] buf2;
+
+    return ret;
+}
+
 
 }
 }

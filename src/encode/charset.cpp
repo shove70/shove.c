@@ -1,4 +1,5 @@
-//#include <iconv.h>
+#include <iconv.h>
+#include <stdlib.h>
 
 #include "charset.h"
 
@@ -70,8 +71,8 @@ wstring Charset::utf2uni(const char* src, wstring& t)
         return L"";
     }
 
-    int size_s = strlen(src);
-    int size_d = size_s + 10;
+    size_t size_s = strlen(src);
+    size_t size_d = size_s + 10;
 
     wchar_t *des = new wchar_t[size_d];
     memset(des, 0, size_d * sizeof(wchar_t));
@@ -135,15 +136,15 @@ wstring Charset::utf2uni(const char* src, wstring& t)
     return t;
 }
 
-int Charset::uni2utf(const wstring& strRes, char* utf8, int nMaxSize)
+size_t Charset::uni2utf(const wstring& strRes, char* utf8, size_t nMaxSize)
 {
     if (utf8 == NULL)
     {
         return -1;
     }
 
-    int len = 0;
-    int size_d = nMaxSize;
+    size_t len = 0;
+    size_t size_d = nMaxSize;
 
 
     for (wstring::const_iterator it = strRes.begin(); it != strRes.end(); ++it)
@@ -219,27 +220,27 @@ string Charset::utfs2s(const string& strutf)
     return ws2s(wStrTmp);
 }
 
-//string Charset::convert(const string& input, char* from_encoding, char* to_encoding)
-//{
-//    size_t in_len  = input.length();
-//    size_t out_len = in_len * 4;
-//    iconv_t cd     = iconv_open(to_encoding, from_encoding);
-//    char* outbuf   = (char*)malloc(out_len);
-//    bzero(outbuf, out_len);
-//
-//    char* in  = (char*)input.c_str();
-//    char* out = outbuf;
-//
-//    iconv(cd, &in, (size_t*)&in_len, &out, &out_len);
-//
-//    out_len = strlen(outbuf);
-//    string result(outbuf);
-//    free(outbuf);
-//
-//    iconv_close(cd);
-//
-//    return result;
-//}
+string Charset::convert(const string& input, char* from_encoding, char* to_encoding)
+{
+    size_t in_len  = input.length();
+    size_t out_len = in_len * 4;
+    iconv_t cd     = iconv_open(to_encoding, from_encoding);
+    char* outbuf   = (char*)malloc(out_len);
+    memset(outbuf, 0, out_len);
+
+    char* in  = (char*)input.c_str();
+    char* out = outbuf;
+
+    iconv(cd, &in, (size_t*)&in_len, &out, &out_len);
+
+    out_len = strlen(outbuf);
+    string result(outbuf);
+    free(outbuf);
+
+    iconv_close(cd);
+
+    return result;
+}
 
 }
 }

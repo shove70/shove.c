@@ -666,7 +666,7 @@ vector<char> Mail::makesmtpmessage() const
     }
 
     vec_str_const_iter it;
-    int count = to.size();
+    size_t count = to.size();
 
     if (count)
         headerline += "To: ";
@@ -977,7 +977,7 @@ bool Mail::gethostaddresses(vector<SOCKADDR_IN>& adds)
         while (stringpos < server.length())
         {
             string part(server.substr(stringpos, next - stringpos));
-            dns[dnspos] = part.length();
+            dns[dnspos] = (unsigned char)part.length();
             ++dnspos;
 
             for (string::size_type i = 0; i < part.length(); ++i, ++dnspos)
@@ -991,7 +991,7 @@ bool Mail::gethostaddresses(vector<SOCKADDR_IN>& adds)
             if (next == string::npos)
             {
                 part = server.substr(stringpos, server.length() - stringpos);
-                dns[dnspos] = part.length();
+                dns[dnspos] = (unsigned char)part.length();
                 ++dnspos;
 
                 for (string::size_type i = 0; i < part.length(); ++i, ++dnspos)
@@ -1005,7 +1005,7 @@ bool Mail::gethostaddresses(vector<SOCKADDR_IN>& adds)
     }
     else
     {
-        dns[dnspos] = server.length();
+        dns[dnspos] = (unsigned char)server.length();
         ++dnspos;
 
         for (string::size_type i = 0; i < server.length(); ++i, ++dnspos)

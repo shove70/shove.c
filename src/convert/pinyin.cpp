@@ -38,10 +38,10 @@ string chineseToPinyin(string const &input, bool isLetteryEnd)
 {
     string result;
     unsigned short char_zh;
-    int inputLength = input.length();
+    size_t inputLength = input.length();
     unsigned char high, low;
 
-    for (int i = 0; i < inputLength; ++i)
+    for (size_t i = 0; i < inputLength; ++i)
     {
         high = input[i];
 

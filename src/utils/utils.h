@@ -107,5 +107,8 @@ bool inArray(vector<T> array, T value)
 size_t strToByte_hex(const string&, ubyte*, size_t = 0);
 string byteToStr_hex(ubyte*, size_t);
 
+string rsaEncrypt(const string& key, const string& data);
+string rsaDecrypt(const string& key, const string& data);
+
 }
 }
