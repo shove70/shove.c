@@ -218,11 +218,16 @@ long Socket::Send(const char* buf, long buflen)
     return sent;
 }
 
-long Socket::Recv(char* buf, long buflen)
+long Socket::Recv(char* buf, long buflen, int timeout)
 {
     if (m_sock == _SOCKET_ERROR)
     {
         return -1;
+    }
+
+    if (timeout == 0)
+    {
+        timeout = this->timeout;
     }
 
     fd_set fd;

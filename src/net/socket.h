@@ -33,7 +33,9 @@ namespace net
 
 class Socket
 {
+
 public:
+
     int timeout;
     unsigned int max_send_buffer_size;
     unsigned int max_recv_buffer_size;
@@ -52,7 +54,7 @@ public:
     virtual void Shutdown();
 
     virtual long Send(const char* buf, long buflen);
-    virtual long Recv(char* buf, long buflen);
+    virtual long Recv(char* buf, long buflen, int timeout = 0); // -1 not timeout, 0 use this->thisout, > 0 is effective value
     virtual long SendTo(const char* buf, int len, const struct sockaddr_in* toaddr, int tolen);
     virtual long RecvFrom(char* buf, int len, struct sockaddr_in* fromaddr, int* fromlen);
 
@@ -60,7 +62,9 @@ public:
     virtual void SetKeepAlive();
 
     SOCKET GetHandle();
+
 private:
+
     int SOCK_TYPE;
     bool connected;
 

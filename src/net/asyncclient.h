@@ -18,12 +18,14 @@ typedef void (*OnReceive)(vector<unsigned char>& buffer);
 class AsyncClient : public Client
 {
 public:
+
     OnReceive onReceive;
 
-    AsyncClient(const string& host, unsigned short port, unsigned short magic, OnReceive onReceive);
+    AsyncClient(const string& host, unsigned short port, unsigned short magic, OnReceive onReceive, int receiveTimeout = 0);
 
 private:
-    static void asyncReceive(AsyncClient* client);
+
+    static void asyncReceive(AsyncClient* client, int receiveTimeout);
 };
 
 }

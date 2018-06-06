@@ -25,8 +25,9 @@ public:
     ~Client();
     void setHost(const string& host, unsigned short port);
     int  connect();
+    void setReceiveTimeout(int seconds);
     long send(const vector<unsigned char>& sendBuffer);
-    long receive(vector<unsigned char>& receiveBuffer);
+    long receive(vector<unsigned char>& receiveBuffer, int timeout = 0);
     void close();
     void reset();
     string& getHost();

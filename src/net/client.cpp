@@ -72,6 +72,11 @@ int Client::connect()
     return 0;
 }
 
+void Client::setReceiveTimeout(int seconds)
+{
+    socket->timeout = seconds;
+}
+
 long Client::send(const vector<unsigned char>& sendBuffer)
 {
     if (!socket->IsConnected())
@@ -97,7 +102,7 @@ long Client::send(const vector<unsigned char>& sendBuffer)
     return len;
 }
 
-long Client::receive(vector<unsigned char>& receiveBuffer)
+long Client::receive(vector<unsigned char>& receiveBuffer, int timeout)
 {
     if (!socket->IsConnected())
     {
@@ -106,7 +111,7 @@ long Client::receive(vector<unsigned char>& receiveBuffer)
 
     unsigned char buffer[6];
     long len;
-    if ((len = socket->Recv((char*)buffer, 2)) != 2)
+    if ((len = socket->Recv((char*)buffer, 2, timeout)) != 2)
     {
         return len;
     }
@@ -115,7 +120,7 @@ long Client::receive(vector<unsigned char>& receiveBuffer)
         return -2;
     }
 
-    if ((len = socket->Recv((char*)buffer + 2, 4)) != 4)
+    if ((len = socket->Recv((char*)buffer + 2, 4, timeout)) != 4)
     {
         return len;
     }
@@ -126,7 +131,7 @@ long Client::receive(vector<unsigned char>& receiveBuffer)
     }
 
     unsigned char* data = new unsigned char[size];
-    len = socket->Recv((char*)data, size);
+    len = socket->Recv((char*)data, size, timeout);
 
     if (len != (long)size)
     {
