@@ -1,4 +1,4 @@
-#include <iconv.h>
+//#include <iconv.h>
 
 #include "charset.h"
 
@@ -219,27 +219,27 @@ string Charset::utfs2s(const string& strutf)
     return ws2s(wStrTmp);
 }
 
-string Charset::convert(const string& input, char* from_encoding, char* to_encoding)
-{
-    size_t in_len  = input.length();
-    size_t out_len = in_len * 4;
-    iconv_t cd     = iconv_open(to_encoding, from_encoding);
-    char* outbuf   = (char*)malloc(out_len);
-    bzero(outbuf, out_len);
-
-    char* in  = (char*)input.c_str();
-    char* out = outbuf;
-
-    iconv(cd, &in, (size_t*)&in_len, &out, &out_len);
-
-    out_len = strlen(outbuf);
-    string result(outbuf);
-    free(outbuf);
-
-    iconv_close(cd);
-
-    return result;
-}
+//string Charset::convert(const string& input, char* from_encoding, char* to_encoding)
+//{
+//    size_t in_len  = input.length();
+//    size_t out_len = in_len * 4;
+//    iconv_t cd     = iconv_open(to_encoding, from_encoding);
+//    char* outbuf   = (char*)malloc(out_len);
+//    bzero(outbuf, out_len);
+//
+//    char* in  = (char*)input.c_str();
+//    char* out = outbuf;
+//
+//    iconv(cd, &in, (size_t*)&in_len, &out, &out_len);
+//
+//    out_len = strlen(outbuf);
+//    string result(outbuf);
+//    free(outbuf);
+//
+//    iconv_close(cd);
+//
+//    return result;
+//}
 
 }
 }

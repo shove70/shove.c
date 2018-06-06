@@ -18,7 +18,7 @@ public:
     static string  s2utfs (const string& strSrc);
     static string  utfs2s (const string& strutf);
 
-    static string  convert(const string& input, char* from_encoding, char* to_encoding);
+    //static string  convert(const string& input, char* from_encoding, char* to_encoding);
 };
 
 }

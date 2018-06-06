@@ -1,8 +1,7 @@
 #pragma once
 
-#ifdef WIN32
+#ifdef _WIN32
 #pragma warning( disable : 4786 )
-// tell the linker which libraries to find functions in
 #pragma comment(lib, "ws2_32.lib")
 #include <winsock2.h>
 #else
