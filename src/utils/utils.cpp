@@ -350,20 +350,6 @@ time_t timeFromString(const string& str)    // 2008-12-29 23:54:00
 //    return timelocal(&t);
 //}
 
-string ubyteVectorToString(const vector<ubyte>& buf)
-{
-    char* data = new char[buf.size()];
-    for (size_t i = 0; i < buf.size(); i++)
-    {
-        data[i] = (char)buf[i];
-    }
-
-    string ret(data, buf.size());
-    delete[] data;
-
-    return ret;
-}
-
 void _sleep(int seconds)
 {
 #ifdef _MSC_VER
