@@ -25,8 +25,9 @@ bool        isFile(const string& name);
 void        getFiles(const string& path, vector<string>& files);
 void        getDirs(const string& path, vector<string>& dirs);
 string      thisExePath();
-#ifdef _WIN32
+
 bool        isUtf8(const void* data, size_t size);
+#ifdef _WIN32
 string      ansi2utf8(const string& ansi);
 string      utf82ansi(const string& utf8);
 #endif

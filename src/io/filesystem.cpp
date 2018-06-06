@@ -440,7 +440,6 @@ string thisExePath()
 }
 #endif
 
-#ifdef _WIN32
 bool isUtf8(const void* data, size_t size)
 {
     bool ret = true;
@@ -492,6 +491,7 @@ bool isUtf8(const void* data, size_t size)
     return ret;
 }
 
+#ifdef _WIN32
 string ansi2utf8(const string& ansi)
 {
     if (isUtf8(ansi.c_str(), (long)ansi.length()))
