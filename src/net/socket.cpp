@@ -238,7 +238,7 @@ long Socket::Recv(char* buf, long buflen, int timeout)
     while (receive < buflen)
     {
         struct timeval val = { timeout, 0 };
-        int selret = select((int)m_sock + 1, &fd, NULL, NULL, &val);
+        int selret = select((int)m_sock + 1, &fd, NULL, NULL, (timeout == -1) ? NULL : &val);
 
         if (selret <= 0)
         {
