@@ -1,4 +1,6 @@
+#ifndef __ANDROID__
 #include <iconv.h>
+#endif
 #include <stdlib.h>
 #include <memory.h>
 
@@ -227,6 +229,7 @@ string Charset::utfs2s(const string& strutf)
 
 string Charset::convert(const string& input, char* from_encoding, char* to_encoding)
 {
+#ifndef __ANDROID__
     size_t in_len  = input.length();
     size_t out_len = in_len * 4;
     iconv_t cd     = iconv_open(to_encoding, from_encoding);
@@ -245,6 +248,9 @@ string Charset::convert(const string& input, char* from_encoding, char* to_encod
     iconv_close(cd);
 
     return result;
+#else
+    return input;
+#endif
 }
 
 }
