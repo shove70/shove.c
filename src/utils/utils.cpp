@@ -171,6 +171,13 @@ string stringCut_utf8(const string& str, size_t len)
     return str.substr(0, i);
 }
 
+void initCurl() // Call this in main thread at precess begin.
+{
+#ifndef _MSC_VER
+    curl_global_init(CURL_GLOBAL_ALL);
+#endif
+}
+
 bool downloadFile(const string& url, const string& saveFilename)
 {
     string path = dirName(saveFilename);

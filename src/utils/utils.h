@@ -37,6 +37,7 @@ bool startsWith(const string& str, const string& start);
 bool endsWith(const string& str, const string& end);
 string stringCut_utf8(const string& str, size_t len);
 
+void initCurl();
 bool downloadFile(const string& url, const string& saveFilename);
 string readFile(const string& filename);
 void writeFile(const string& filename, const string& data);
