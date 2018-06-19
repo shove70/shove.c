@@ -99,15 +99,24 @@ int createDirectories(const string& path)
 
 int removeDirectory(const string& path)
 {
-#ifdef _WIN32
-    int ret = _rmdir(path.c_str());
-#else
-    int ret = rmdir(path.c_str());
-#endif
-    if (ret != 0)
+    vector<string> files;
+    getFiles(path, files);
+    for (auto x: files)
     {
-        return ret;
+        remove(x.c_str());
     }
+
+    vector<string> dirs;
+    getDirs(path, dirs);
+    for (auto x: dirs)
+    {
+        removeDirectory(x.c_str());
+    }
+#ifdef _WIN32
+    _rmdir(path.c_str());
+#else
+    rmdir(path.c_str());
+#endif
 
     return 0;
 }
@@ -279,7 +288,8 @@ void getFiles(const string& path, vector<string>& files)
         temppath += "/";
     }
 
-    while ((d_ent = readdir(dir)) != NULL) {
+    while ((d_ent = readdir(dir)) != NULL)
+    {
         struct stat file_stat;
         if (strncmp(d_ent->d_name, ".", 1) == 0 || strncmp(d_ent->d_name, "..", 2) == 0)
         {
