@@ -53,7 +53,7 @@ void splitString(const string& str, vector<string>& result, const string& delimi
         result.push_back(str.substr(pos1));
 }
 
-void splitString(const string& str, vector<SplitResult>& result, const CRegexpT<char>& re)
+void splitString(const string& str, vector<SplitResult>& result, const CRegexpT<char>& re, bool keepSeparators)
 {
     result.clear();
     string::size_type pos1, pos2;
@@ -66,12 +66,19 @@ void splitString(const string& str, vector<SplitResult>& result, const CRegexpT<
         pos2 = match.GetStart();
         result.push_back(SplitResult(pos1, pos2 - pos1));
 
+        if (keepSeparators)
+        {
+            result.push_back(SplitResult(pos2, match.GetEnd() - match.GetStart()));
+        }
+
         pos1 = pos2 + (match.GetEnd() - match.GetStart());
         match = re.Match(str.c_str(), match.GetEnd());
     }
 
     if (pos1 != str.length())
+    {
         result.push_back(SplitResult(pos1, str.length() - pos1));
+    }
 }
 
 void replaceString(string& str, const string& src, const string& dst, int count)

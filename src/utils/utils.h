@@ -29,7 +29,7 @@ struct SplitResult
         this->count = count;
     }
 };
-void splitString(const string& str, vector<SplitResult>& result, const CRegexpT<char>& re);
+void splitString(const string& str, vector<SplitResult>& result, const CRegexpT<char>& re, bool keepSeparators = false);
 
 void replaceString(string& str, const string& src, const string& dst, int count);
 string trim(string str);
