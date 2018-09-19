@@ -14,7 +14,7 @@ bool Connect(SOCKET sockfd, const SOCKADDR_IN& addr)
 #ifdef _WIN32
     return bool(connect(sockfd, (sockaddr*)&addr, (int)addr.get_size()) != SOCKET_ERROR);
 #else
-    return bool(connect(sockfd, (sockaddr*) &addr, addr.get_size()) == 0);
+    return bool(connect(sockfd, (sockaddr*) &addr, (int)addr.get_size()) == 0);
 #endif
 }
 
@@ -34,7 +34,7 @@ bool Send(int &CharsSent, SOCKET s, const char *msg, size_t len, int flags)
     CharsSent = send(s, msg, (int)len, flags);
     return bool((CharsSent != SOCKET_ERROR));
 #else
-    CharsSent = send(s, msg, len, flags);
+    CharsSent = (int)send(s, msg, len, flags);
     return bool((CharsSent != -1));
 #endif
 }
@@ -45,7 +45,7 @@ bool Recv(int &CharsRecv, SOCKET s, char *buf, size_t len, int flags)
     CharsRecv = recv(s, buf, (int)len, flags);
     return bool((CharsRecv != SOCKET_ERROR));
 #else
-    CharsRecv = recv(s, buf, len, flags);
+    CharsRecv = (int)recv(s, buf, len, flags);
     return bool((CharsRecv != -1));
 #endif
 }
