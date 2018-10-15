@@ -396,15 +396,12 @@ size_t strToByte_hex(const string& input, ubyte* result, size_t max_len)
 
 string byteToStr_hex(ubyte* input, size_t len)
 {
-    char* t = new char[len * 2];
+    string ret(len * 2, 0);
 
     for (size_t i = 0; i < len; i++)
     {
-        sprintf(t + i * 2, "%02X", input[i]);
+        sprintf((char*)ret.c_str() + (i * 2), "%02X", input[i]);
     }
-
-    string ret(t, len * 2);
-    delete[] t;
 
     return ret;
 }
