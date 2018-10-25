@@ -91,17 +91,12 @@ inline size_t Bitmanip::write<string>(const string& value, vector<ubyte>& buffer
 template <>
 inline string Bitmanip::peek<string>(ubyte* buffer, size_t offset, size_t count)
 {
-    ubyte* p = new ubyte[count];
+    string ret(count, 0);
 
-    size_t i = 0;
-    while (i < count)
+    for (size_t i = 0; i < count; i++)
     {
-        p[i] = buffer[offset + i];
-        i++;
+        ((char*)ret.c_str())[i] = buffer[offset + i];
     }
-
-    string ret((char*)p, count);
-    delete[] p;
 
     return ret;
 }
