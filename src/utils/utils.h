@@ -49,27 +49,14 @@ time_t timeFromString(const string& str);
 template<typename T>
 string vectorToString(const vector<typename enable_if<is_same<char,  T>::value || is_same<ubyte, T>::value, T>::type>& buf)
 {
-    char* data = new char[buf.size()];
-    for (size_t i = 0; i < buf.size(); i++)
-    {
-        data[i] = (char)buf[i];
-    }
-
-    string ret(data, buf.size());
-    delete[] data;
-
-    return ret;
+    return string((char*)(buf.data()), buf.size());
 }
 
 template<typename T>
 void stringToVector(const string& input, vector<typename enable_if<is_same<char,  T>::value || is_same<ubyte, T>::value, T>::type>& result)
 {
     result.clear();
-
-    for (auto x: input)
-    {
-        result.push_back((T)x);
-    }
+    result.assign(input.begin(), input.end());
 }
 
 template<typename T>
