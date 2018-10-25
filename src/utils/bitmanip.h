@@ -95,7 +95,7 @@ inline string Bitmanip::peek<string>(ubyte* buffer, size_t offset, size_t count)
 
     for (size_t i = 0; i < count; i++)
     {
-        ((char*)ret.c_str())[i] = buffer[offset + i];
+        ((ubyte*)ret.c_str())[i] = buffer[offset + i];
     }
 
     return ret;
