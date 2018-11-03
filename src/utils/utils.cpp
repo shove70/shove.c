@@ -187,6 +187,9 @@ void initCurl() // Call this in main thread at precess begin.
 
 bool downloadFile(const string& url, const string& saveFilename)
 {
+    assert(!url.empty());
+    assert(!saveFilename.empty());
+
     string path = dirName(saveFilename);
 
     if (!fileExists(path))
