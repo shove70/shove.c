@@ -92,6 +92,23 @@ bool inArray(vector<T> array, T value)
     return (count(array.begin(), array.end(), value) > 0);
 }
 
+template<typename T>
+long pos(vector<T> array, T value)
+{
+    long ret = -1;
+
+    for (size_t i = 0; i < array.size(); i++)
+    {
+        if (array[i] == value)
+        {
+            ret = (long)i;
+            break;
+        }
+    }
+
+    return ret;
+}
+
 size_t strToByte_hex(const string&, ubyte*, size_t = 0);
 string byteToStr_hex(ubyte*, size_t);
 
