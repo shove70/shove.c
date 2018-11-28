@@ -369,12 +369,12 @@ time_t timeFromString(const string& str)    // 2008-12-29 23:54:00
 //    return timelocal(&t);
 //}
 
-void _sleep(int seconds)
+void _sleep(int milliseconds)
 {
 #ifdef _MSC_VER
-    Sleep(seconds * 1000);
+    Sleep(milliseconds);
 #else
-    sleep(seconds);
+    sleep((int)(milliseconds / 1000));
 #endif
 }
 

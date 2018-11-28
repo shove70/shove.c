@@ -84,7 +84,7 @@ inline string toString<ubyte>(ubyte value)
     return trim(ss.str());
 }
 
-void _sleep(int seconds);
+void _sleep(int milliseconds);
 
 template<typename T>
 bool inArray(vector<T> array, T value)
