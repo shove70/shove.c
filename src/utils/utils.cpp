@@ -7,6 +7,8 @@
 #include <fstream>
 #include <time.h>
 #include <cassert>
+#include <thread>
+
 #ifdef _MSC_VER
     #ifndef WIN32_LEAN_AND_MEAN
         #define WIN32_LEAN_AND_MEAN
@@ -371,11 +373,7 @@ time_t timeFromString(const string& str)    // 2008-12-29 23:54:00
 
 void _sleep(int milliseconds)
 {
-#ifdef _MSC_VER
-    Sleep(milliseconds);
-#else
-    sleep((int)(milliseconds / 1000));
-#endif
+    std::this_thread::sleep_for(std::chrono::milliseconds(milliseconds));
 }
 
 size_t strToByte_hex(const string& input, ubyte* result, size_t max_len)
