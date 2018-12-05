@@ -90,7 +90,22 @@ size_t TEA::decrypt(ubyte* data, size_t len, ubyte* result)
         writeIntToBytes<int>(v1, result + (i * 8 + 4));
     }
 
-    return readIntFromBytes<uint>(result + (len - 4), ENDIAN_BIG);
+    size_t result_len = readIntFromBytes<uint>(result + (len - 4), ENDIAN_BIG);
+
+    if ((result_len < 0) || (result_len > (len - 4)))
+    {
+        return 0;
+    }
+
+    for (size_t i = result_len; i < (len - 4); i++)
+    {
+        if (result[i] != 0)
+        {
+            return 0;
+        }
+    }
+
+    return result_len;
 }
 
 size_t TEAUtils::encrypt(ubyte* data, size_t len, int key[], ubyte* result)
@@ -192,7 +207,22 @@ size_t XTEA::decrypt(ubyte* data, size_t len, ubyte* result)
         writeIntToBytes<int>(v1, result + (i * 8 + 4));
     }
 
-    return readIntFromBytes<uint>(result + (len - 4), ENDIAN_BIG);
+    size_t result_len = readIntFromBytes<uint>(result + (len - 4), ENDIAN_BIG);
+
+    if ((result_len < 0) || (result_len > (len - 4)))
+    {
+        return 0;
+    }
+
+    for (size_t i = result_len; i < (len - 4); i++)
+    {
+        if (result[i] != 0)
+        {
+            return 0;
+        }
+    }
+
+    return result_len;
 }
 
 size_t XTEAUtils::encrypt(ubyte* data, size_t len, int key[], ubyte* result)

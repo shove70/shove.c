@@ -365,7 +365,22 @@ public:
             state[3] = isbox[(ubyte)(t[3])] ^ ((isbox[(ubyte)(t[2] >> 8)]) << 8) ^ ((isbox[(ubyte)(t[1] >> 16)]) << 16) ^ ((isbox[(ubyte)(t[0] >> 24)]) << 24) ^ dw[3];
         }
 
-        return readIntFromBytes<uint>(result + (len - 4), ENDIAN_BIG);
+        size_t result_len = readIntFromBytes<uint>(result + (len - 4), ENDIAN_BIG);
+
+        if ((result_len < 0) || (result_len > (len - 4)))
+        {
+            return 0;
+        }
+
+        for (size_t i = result_len; i < (len - 4); i++)
+        {
+            if (result[i] != 0)
+            {
+                return 0;
+            }
+        }
+
+        return result_len;
     }
 };
 
