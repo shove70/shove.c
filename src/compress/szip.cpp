@@ -144,7 +144,7 @@ int Szip::unzip(const string& szipFilename, const string& outputPath)
     size_t len = fileLength(szipFilename);
     assert(len > 2);
 
-    __unused unsigned char const magic[] = { 12, 29 };
+    unsigned char const magic[] = { 12, 29 };
     unsigned char* data = new unsigned char[len];
     ifstream fin(szipFilename, ios::binary);
     fin.read((char *)data, len);

@@ -3,6 +3,7 @@
 #endif
 #include <stdlib.h>
 #include <memory.h>
+#include <string.h>
 
 #include "charset.h"
 
