@@ -141,6 +141,39 @@ bool endsWith(const string& str, const string& end)
     return (str.substr(srclen - endlen, endlen) == end);
 }
 
+size_t stringLength_utf8(const string& str)
+{
+    if (str.size() == 0)
+    {
+        return 0;
+    }
+
+    size_t ret = 0;
+
+    size_t i = 0;
+    while (i < str.size())
+    {
+        ret++;
+        unsigned int c = (ubyte)str[i];
+
+        if ((c & 0xE0) == 0xC0)
+        {
+            i += 1;
+        }
+        else if ((c & 0xF0) == 0xE0)
+        {
+            i += 2;
+        }
+        else if ((c & 0xF8) == 0xF0)
+        {
+            i += 3;
+        }
+        i++;
+    }
+
+    return ret;
+}
+
 string stringCut_utf8(const string& str, size_t len)
 {
     if ((len == 0) || (str.size() == 0))

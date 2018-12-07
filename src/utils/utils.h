@@ -35,6 +35,7 @@ void replaceString(string& str, const string& src, const string& dst, int count)
 string trim(string str);
 bool startsWith(const string& str, const string& start);
 bool endsWith(const string& str, const string& end);
+size_t stringLength_utf8(const string& str);
 string stringCut_utf8(const string& str, size_t len);
 
 void initCurl();
