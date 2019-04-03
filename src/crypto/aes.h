@@ -186,6 +186,8 @@ private:
 
     uint w[Nb * (Nr + 1)];
     uint dw[Nb * (Nr + 1)];
+    ubyte* m_iv;
+    bool m_ivFreeRequire;
 
     void keyExpansion(ubyte* key, size_t len)
     {
@@ -260,18 +262,45 @@ private:
 
 public:
 
-    AES(ubyte* key, size_t len)
+    AES(ubyte* key, size_t len, ubyte* iv = NULL)
     {
         static_assert ((Nb == 4 && Nk == 4 && Nr == 10) || (Nb == 4 && Nk == 6 && Nr == 12) || (Nb == 4 && Nk == 8 && Nr == 14), "template parameter error.");
         keyExpansion(key, len);
+
+        if (iv == NULL)
+        {
+            m_ivFreeRequire = true;
+            m_iv = new ubyte[16];
+            memset(m_iv, 0, 16);
+        }
+        else
+        {
+            m_ivFreeRequire = false;
+            m_iv = iv;
+        }
+    }
+
+    ~AES()
+    {
+        if (m_ivFreeRequire)
+        {
+            delete[] m_iv;
+        }
     }
 
     size_t encrypt(ubyte* data, size_t len, ubyte* result, PaddingMode paddingMode = PaddingMode::NoPadding)
     {
         size_t output_len = Padding::padding(data, len, 16, result, paddingMode);
+        ubyte* iv_step = new ubyte[16];
+        memcpy(iv_step, m_iv, 16);
 
         for (size_t i = 0; i < output_len / 16; i++)
         {
+            for (int j = 0; j < 16; j++)
+            {
+                result[i * 16 + j] ^= iv_step[j];
+            }
+
             uint* state = (uint*)result + i * 4;
             uint t[4] = { 0, 0, 0, 0 };
             uint round = 0;
@@ -304,8 +333,11 @@ public:
             state[1] = sbox[(ubyte)(t[1])] ^ ((sbox[(ubyte)(t[2] >> 8)]) << 8) ^ ((sbox[(ubyte)(t[3] >> 16)]) << 16) ^ ((sbox[(ubyte)(t[0] >> 24)]) << 24) ^ w[round * Nb + 1];
             state[2] = sbox[(ubyte)(t[2])] ^ ((sbox[(ubyte)(t[3] >> 8)]) << 8) ^ ((sbox[(ubyte)(t[0] >> 16)]) << 16) ^ ((sbox[(ubyte)(t[1] >> 24)]) << 24) ^ w[round * Nb + 2];
             state[3] = sbox[(ubyte)(t[3])] ^ ((sbox[(ubyte)(t[0] >> 8)]) << 8) ^ ((sbox[(ubyte)(t[1] >> 16)]) << 16) ^ ((sbox[(ubyte)(t[2] >> 24)]) << 24) ^ w[round * Nb + 3];
+
+            memcpy(iv_step, result + i * 16, 16);
         }
 
+        delete[] iv_step;
         return output_len;
     }
 
@@ -318,8 +350,14 @@ public:
             result[i] = data[i];
         }
 
+        ubyte* iv_step = new ubyte[16];
+        memcpy(iv_step, m_iv, 16);
+
         for (size_t i = 0; i < len / 16; i++)
         {
+            ubyte* iv_next = new ubyte[16];
+            memcpy(iv_next, result + i * 16, 16);
+
             uint *state = (uint*)result + i * 4;
             uint t[4] = { 0, 0, 0, 0 };
 
@@ -328,7 +366,8 @@ public:
             state[1] ^= dw[Nr * Nb + 1];
             state[2] ^= dw[Nr * Nb + 2];
             state[3] ^= dw[Nr * Nb + 3];
-            for (uint i = 0; i < Nb; i++) {
+            for (uint i = 0; i < Nb; i++)
+            {
                 t[i] = state[i];
             }
 
@@ -350,8 +389,17 @@ public:
             state[1] = isbox[(ubyte)(t[1])] ^ ((isbox[(ubyte)(t[0] >> 8)]) << 8) ^ ((isbox[(ubyte)(t[3] >> 16)]) << 16) ^ ((isbox[(ubyte)(t[2] >> 24)]) << 24) ^ dw[1];
             state[2] = isbox[(ubyte)(t[2])] ^ ((isbox[(ubyte)(t[1] >> 8)]) << 8) ^ ((isbox[(ubyte)(t[0] >> 16)]) << 16) ^ ((isbox[(ubyte)(t[3] >> 24)]) << 24) ^ dw[2];
             state[3] = isbox[(ubyte)(t[3])] ^ ((isbox[(ubyte)(t[2] >> 8)]) << 8) ^ ((isbox[(ubyte)(t[1] >> 16)]) << 16) ^ ((isbox[(ubyte)(t[0] >> 24)]) << 24) ^ dw[3];
+
+            for (int j = 0; j < 16; j++)
+            {
+                result[i * 16 + j] ^= iv_step[j];
+            }
+
+            memcpy(iv_step, iv_next, 16);
+            delete[] iv_next;
         }
 
+        delete[] iv_step;
         return Padding::unpadding(result, len, 16, paddingMode);
     }
 };
@@ -365,23 +413,23 @@ class AESUtils
 public:
 
     template<typename AES_X = AES128>
-    static size_t encrypt(ubyte* data, size_t len, string key, ubyte* result, PaddingMode paddingMode = PaddingMode::NoPadding)
+    static size_t encrypt(ubyte* data, size_t len, string key, ubyte* result, ubyte* iv = NULL, PaddingMode paddingMode = PaddingMode::NoPadding)
     {
-        return handle<AES_X, 1>(data, len, key, result, paddingMode);
+        return handle<AES_X, 1>(data, len, key, result, iv, paddingMode);
     }
 
     template<class AES_X = AES128>
-    static size_t decrypt(ubyte* data, size_t len, string key, ubyte* result, PaddingMode paddingMode = PaddingMode::NoPadding)
+    static size_t decrypt(ubyte* data, size_t len, string key, ubyte* result, ubyte* iv = NULL, PaddingMode paddingMode = PaddingMode::NoPadding)
     {
-        return handle<AES_X, 2>(data, len, key, result, paddingMode);
+        return handle<AES_X, 2>(data, len, key, result, iv, paddingMode);
     }
 
 private:
 
     template<class AES_X, int EorD>
-    static size_t handle(ubyte* data, size_t len, string key, ubyte* result, PaddingMode paddingMode)
+    static size_t handle(ubyte* data, size_t len, string key, ubyte* result, ubyte* iv, PaddingMode paddingMode)
     {
-        AES_X aes((ubyte*)key.c_str(), key.length());
+        AES_X aes((ubyte*)key.c_str(), key.length(), iv);
         return (EorD == 1) ? aes.encrypt(data, len, result, paddingMode) : aes.decrypt(data, len, result, paddingMode);
     }
 };
