@@ -1,0 +1,47 @@
+_CRT_SECURE_NO_WARNINGS
+_WINSOCK_DEPRECATED_NO_WARNINGS
+
+mkdir Release
+mkdir Release/src
+mkdir Release/src/buffer
+mkdir Release/src/buffer/rpc
+mkdir Release/src/compress
+mkdir Release/src/container
+mkdir Release/src/convert
+mkdir Release/src/crypto
+mkdir Release/src/crypto/tea
+mkdir Release/src/encode
+mkdir Release/src/hash
+mkdir Release/src/io
+mkdir Release/src/math
+mkdir Release/src/net
+mkdir Release/src/net/smtp
+mkdir Release/src/thread
+mkdir Release/src/utils
+cd Release
+
+g++ -O3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/utils/utils.d" -MT"src/utils/utils.o" -o "src/utils/utils.o" "../src/utils/utils.cpp"                              -I"C:\Program Files\zlib\include" -I"C:\Program Files\curl\include" -I"C:\Program Files\iconv\include"
+g++ -O3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/text/configuration.d" -MT"src/text/configuration.o" -o "src/text/configuration.o" "../src/text/configuration.cpp"  -I"C:\Program Files\zlib\include" -I"C:\Program Files\curl\include" -I"C:\Program Files\iconv\include"
+g++ -O3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/text/json.d" -MT"src/text/json.o" -o "src/text/json.o" "../src/text/json.cpp"                                        -I"C:\Program Files\zlib\include" -I"C:\Program Files\curl\include" -I"C:\Program Files\iconv\include"
+g++ -O3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/net/smtp/compat.d" -MT"src/net/smtp/compat.o" -o "src/net/smtp/compat.o" "../src/net/smtp/compat.cpp"                -I"C:\Program Files\zlib\include" -I"C:\Program Files\curl\include" -I"C:\Program Files\iconv\include"
+g++ -O3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/net/smtp/mail.d" -MT"src/net/smtp/mail.o" -o "src/net/smtp/mail.o" "../src/net/smtp/mail.cpp"                        -I"C:\Program Files\zlib\include" -I"C:\Program Files\curl\include" -I"C:\Program Files\iconv\include"
+g++ -O3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/net/asyncclient.d" -MT"src/net/asyncclient.o" -o "src/net/asyncclient.o" "../src/net/asyncclient.cpp"                -I"C:\Program Files\zlib\include" -I"C:\Program Files\curl\include" -I"C:\Program Files\iconv\include"
+g++ -O3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/net/client.d" -MT"src/net/client.o" -o "src/net/client.o" "../src/net/client.cpp"                                    -I"C:\Program Files\zlib\include" -I"C:\Program Files\curl\include" -I"C:\Program Files\iconv\include"
+g++ -O3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/net/socket.d" -MT"src/net/socket.o" -o "src/net/socket.o" "../src/net/socket.cpp"                                    -I"C:\Program Files\zlib\include" -I"C:\Program Files\curl\include" -I"C:\Program Files\iconv\include"
+g++ -O3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/math/bigint.d" -MT"src/math/bigint.o" -o "src/math/bigint.o" "../src/math/bigint.cpp"                                -I"C:\Program Files\zlib\include" -I"C:\Program Files\curl\include" -I"C:\Program Files\iconv\include"
+g++ -O3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/io/filesystem.d" -MT"src/io/filesystem.o" -o "src/io/filesystem.o" "../src/io/filesystem.cpp"                        -I"C:\Program Files\zlib\include" -I"C:\Program Files\curl\include" -I"C:\Program Files\iconv\include"
+g++ -O3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/hash/md5.d" -MT"src/hash/md5.o" -o "src/hash/md5.o" "../src/hash/md5.cpp"                                            -I"C:\Program Files\zlib\include" -I"C:\Program Files\curl\include" -I"C:\Program Files\iconv\include"
+g++ -O3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/encode/base58.d" -MT"src/encode/base58.o" -o "src/encode/base58.o" "../src/encode/base58.cpp"                        -I"C:\Program Files\zlib\include" -I"C:\Program Files\curl\include" -I"C:\Program Files\iconv\include"
+g++ -O3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/encode/base64.d" -MT"src/encode/base64.o" -o "src/encode/base64.o" "../src/encode/base64.cpp"                        -I"C:\Program Files\zlib\include" -I"C:\Program Files\curl\include" -I"C:\Program Files\iconv\include"
+g++ -O3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/encode/charset.d" -MT"src/encode/charset.o" -o "src/encode/charset.o" "../src/encode/charset.cpp"                    -I"C:\Program Files\zlib\include" -I"C:\Program Files\curl\include" -I"C:\Program Files\iconv\include"
+g++ -O3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/encode/urlencode.d" -MT"src/encode/urlencode.o" -o "src/encode/urlencode.o" "../src/encode/urlencode.cpp"            -I"C:\Program Files\zlib\include" -I"C:\Program Files\curl\include" -I"C:\Program Files\iconv\include"
+g++ -O3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/crypto/rsa.d" -MT"src/crypto/rsa.o" -o "src/crypto/rsa.o" "../src/crypto/rsa.cpp"                                    -I"C:\Program Files\zlib\include" -I"C:\Program Files\curl\include" -I"C:\Program Files\iconv\include"
+g++ -O3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/crypto/tea.d" -MT"src/crypto/tea.o" -o "src/crypto/tea.o" "../src/crypto/tea.cpp"                                    -I"C:\Program Files\zlib\include" -I"C:\Program Files\curl\include" -I"C:\Program Files\iconv\include"
+g++ -O3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/crypto/padding.d" -MT"src/crypto/padding.o" -o "src/crypto/padding.o" "../src/crypto/padding.cpp"                                    -I"C:\Program Files\zlib\include" -I"C:\Program Files\curl\include" -I"C:\Program Files\iconv\include"
+g++ -O3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/convert/pinyin.d" -MT"src/convert/pinyin.o" -o "src/convert/pinyin.o" "../src/convert/pinyin.cpp"                    -I"C:\Program Files\zlib\include" -I"C:\Program Files\curl\include" -I"C:\Program Files\iconv\include"
+g++ -O3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/compress/szip.d" -MT"src/compress/szip.o" -o "src/compress/szip.o" "../src/compress/szip.cpp"                        -I"C:\Program Files\zlib\include" -I"C:\Program Files\curl\include" -I"C:\Program Files\iconv\include"
+g++ -O3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/buffer/message.d" -MT"src/buffer/message.o" -o "src/buffer/message.o" "../src/buffer/message.cpp"                    -I"C:\Program Files\zlib\include" -I"C:\Program Files\curl\include" -I"C:\Program Files\iconv\include"
+g++ -O3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/buffer/packet.d" -MT"src/buffer/packet.o" -o "src/buffer/packet.o" "../src/buffer/packet.cpp"                        -I"C:\Program Files\zlib\include" -I"C:\Program Files\curl\include" -I"C:\Program Files\iconv\include"
+g++ -O3 -Wall -c -fmessage-length=0 -MMD -MP -MF"src/main.d" -MT"src/main.o" -o "src/main.o" "../src/main.cpp"                                                            -I"C:\Program Files\zlib\include" -I"C:\Program Files\curl\include" -I"C:\Program Files\iconv\include"
+
+g++ -shared -fPIC -o "shove.dll"  ./src/utils/utils.o  ./src/text/configuration.o ./src/text/json.o  ./src/net/smtp/compat.o ./src/net/smtp/mail.o  ./src/net/asyncclient.o ./src/net/client.o ./src/net/socket.o  ./src/math/bigint.o  ./src/io/filesystem.o  ./src/hash/md5.o  ./src/encode/base58.o ./src/encode/base64.o ./src/encode/charset.o ./src/encode/urlencode.o  ./src/crypto/rsa.o ./src/crypto/tea.o  ./src/crypto/padding.o  ./src/convert/pinyin.o  ./src/compress/szip.o  ./src/buffer/message.o ./src/buffer/packet.o  ./src/main.o -lz -lws2_32 "C:/Program Files/iconv/lib/libiconv.lib" "C:/Program Files/curl/lib/libcurl.lib"
