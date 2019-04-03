@@ -16,6 +16,7 @@ namespace utils
 class Bitmanip
 {
 public:
+
     template <typename T>
     static size_t write(const T& value, vector<ubyte>& buffer, size_t offset)
     {

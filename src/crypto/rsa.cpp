@@ -17,16 +17,14 @@ namespace shove
 namespace crypto
 {
 
-Random rnd;
-
 RSAKeyPair RSA::generateKeyPair(uint bitLength = 1024)
 {
     assert((bitLength >= 128) && (bitLength % 8 == 0));
 
     BigInt p, q, n, t, e;
 
-    p = p.genPseudoPrime(bitLength / 2, 40, rnd);
-    q = q.genPseudoPrime(bitLength / 2, 40, rnd);
+    p = p.genPseudoPrime(bitLength / 2, 40);
+    q = q.genPseudoPrime(bitLength / 2, 40);
     n = p * q;
     t = (p - 1) * (q - 1);
     e = Primes[(rnd.next() % 42) + 6500];
@@ -234,8 +232,8 @@ size_t RSA::encrypt_mixinXteaMode(RSAKeyInfo key, ubyte* data, size_t len, ubyte
         return pos;
     }
 
-    block = new ubyte[len - blockSize + 12];
-    size_t remainder_len = XTEAUtils::encrypt(data + blockSize, len - blockSize, xteaKey, block);
+    block = new ubyte[len - blockSize + 8];
+    size_t remainder_len = XTEAUtils::encrypt(data + blockSize, len - blockSize, xteaKey, block, PaddingMode::ISO10126);
     for (size_t i = 0; i < remainder_len; i++)
     {
         result[pos++] = block[i];
@@ -339,7 +337,7 @@ size_t RSA::decrypt_mixinXteaMode(RSAKeyInfo key, ubyte* data, size_t len, ubyte
     }
 
     block = new ubyte[len - blockSize];
-    size_t remainder_len = XTEAUtils::decrypt(data + blockSize, len - blockSize, xteaKey, block);
+    size_t remainder_len = XTEAUtils::decrypt(data + blockSize, len - blockSize, xteaKey, block, PaddingMode::ISO10126);
 
     for (size_t i = 0; i < remainder_len; i++)
     {

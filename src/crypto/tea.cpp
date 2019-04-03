@@ -16,30 +16,10 @@ TEA::TEA(int* key)
     this->m_rounds = 32;
 }
 
-size_t TEA::padding(ubyte* data, size_t len, ubyte* output)
-{
-    size_t output_len = len;
-    while ((output_len + 4) % 8 != 0) output_len++;
-
-    for (size_t i = 0; i < len; i++)
-    {
-        output[i] = data[i];
-    }
-
-    for (size_t i = len; i < output_len; i++)
-    {
-        output[i] = 0;
-    }
-
-    writeIntToBytes<uint>((uint)len, output + output_len, ENDIAN_BIG);
-
-    return output_len + 4;
-}
-
 // Encrypt given ubyte array (length to be crypted must be 8 ubyte aligned)
-size_t TEA::encrypt(ubyte* data, size_t len, ubyte* result)
+size_t TEA::encrypt(ubyte* data, size_t len, ubyte* result, PaddingMode paddingMode)
 {
-    size_t output_len = padding(data, len, result);
+    size_t output_len = Padding::padding(data, len, 8, result, paddingMode);
 
     for (size_t i = 0; i < (output_len + 4) / 8; i++)
     {
@@ -63,7 +43,7 @@ size_t TEA::encrypt(ubyte* data, size_t len, ubyte* result)
 }
 
 // Decrypt given ubyte array (length to be crypted must be 8 ubyte aligned)
-size_t TEA::decrypt(ubyte* data, size_t len, ubyte* result)
+size_t TEA::decrypt(ubyte* data, size_t len, ubyte* result, PaddingMode paddingMode)
 {
     assert(len > 0 && len % 8 == 0);
 
@@ -90,38 +70,23 @@ size_t TEA::decrypt(ubyte* data, size_t len, ubyte* result)
         writeIntToBytes<int>(v1, result + (i * 8 + 4));
     }
 
-    size_t result_len = readIntFromBytes<uint>(result + (len - 4), ENDIAN_BIG);
-
-    if ((result_len < 0) || (result_len > (len - 4)))
-    {
-        return 0;
-    }
-
-    for (size_t i = result_len; i < (len - 4); i++)
-    {
-        if (result[i] != 0)
-        {
-            return 0;
-        }
-    }
-
-    return result_len;
+    return Padding::unpadding(result, len, 8, paddingMode);
 }
 
-size_t TEAUtils::encrypt(ubyte* data, size_t len, int key[], ubyte* result)
+size_t TEAUtils::encrypt(ubyte* data, size_t len, int key[], ubyte* result, PaddingMode paddingMode)
 {
-    return handle(data, len, key, result, 1);
+    return handle(data, len, key, result, 1, paddingMode);
 }
 
-size_t TEAUtils::decrypt(ubyte* data, size_t len, int key[], ubyte* result)
+size_t TEAUtils::decrypt(ubyte* data, size_t len, int key[], ubyte* result, PaddingMode paddingMode)
 {
-    return handle(data, len, key, result, 2);
+    return handle(data, len, key, result, 2, paddingMode);
 }
 
-size_t TEAUtils::handle(ubyte* data, size_t len, int key[], ubyte* result, int EorD)
+size_t TEAUtils::handle(ubyte* data, size_t len, int key[], ubyte* result, int EorD, PaddingMode paddingMode)
 {
     TEA tea(key);
-    return (EorD == 1) ? tea.encrypt(data, len, result) : tea.decrypt(data, len, result);
+    return (EorD == 1) ? tea.encrypt(data, len, result, paddingMode) : tea.decrypt(data, len, result, paddingMode);
 }
 
 
@@ -133,30 +98,10 @@ XTEA::XTEA(int* key, int rounds)
     this->m_rounds = rounds;
 }
 
-size_t XTEA::padding(ubyte* data, size_t len, ubyte* output)
-{
-    size_t output_len = len;
-    while ((output_len + 4) % 8 != 0) output_len++;
-
-    for (size_t i = 0; i < len; i++)
-    {
-        output[i] = data[i];
-    }
-
-    for (size_t i = len; i < output_len; i++)
-    {
-        output[i] = 0;
-    }
-
-    writeIntToBytes<uint>((uint)len, output + output_len, ENDIAN_BIG);
-
-    return output_len + 4;
-}
-
 // Encrypt given ubyte array (length to be crypted must be 8 ubyte aligned)
-size_t XTEA::encrypt(ubyte* data, size_t len, ubyte* result)
+size_t XTEA::encrypt(ubyte* data, size_t len, ubyte* result, PaddingMode paddingMode)
 {
-    size_t output_len = padding(data, len, result);
+    size_t output_len = Padding::padding(data, len, 8, result, paddingMode);
 
     for (size_t i = 0; i < (output_len + 4) / 8; i++)
     {
@@ -180,7 +125,7 @@ size_t XTEA::encrypt(ubyte* data, size_t len, ubyte* result)
 }
 
 // Decrypt given ubyte array (length to be crypted must be 8 ubyte aligned)
-size_t XTEA::decrypt(ubyte* data, size_t len, ubyte* result)
+size_t XTEA::decrypt(ubyte* data, size_t len, ubyte* result, PaddingMode paddingMode)
 {
     assert(len > 0 && len % 8 == 0);
 
@@ -207,38 +152,23 @@ size_t XTEA::decrypt(ubyte* data, size_t len, ubyte* result)
         writeIntToBytes<int>(v1, result + (i * 8 + 4));
     }
 
-    size_t result_len = readIntFromBytes<uint>(result + (len - 4), ENDIAN_BIG);
-
-    if ((result_len < 0) || (result_len > (len - 4)))
-    {
-        return 0;
-    }
-
-    for (size_t i = result_len; i < (len - 4); i++)
-    {
-        if (result[i] != 0)
-        {
-            return 0;
-        }
-    }
-
-    return result_len;
+    return Padding::unpadding(result, len, 8, paddingMode);
 }
 
-size_t XTEAUtils::encrypt(ubyte* data, size_t len, int key[], ubyte* result)
+size_t XTEAUtils::encrypt(ubyte* data, size_t len, int key[], ubyte* result, PaddingMode paddingMode)
 {
-    return handle(data, len, key, result, 1);
+    return handle(data, len, key, result, 1, paddingMode);
 }
 
-size_t XTEAUtils::decrypt(ubyte* data, size_t len, int key[], ubyte* result)
+size_t XTEAUtils::decrypt(ubyte* data, size_t len, int key[], ubyte* result, PaddingMode paddingMode)
 {
-    return handle(data, len, key, result, 2);
+    return handle(data, len, key, result, 2, paddingMode);
 }
 
-size_t XTEAUtils::handle(ubyte* data, size_t len, int key[], ubyte* result, int EorD)
+size_t XTEAUtils::handle(ubyte* data, size_t len, int key[], ubyte* result, int EorD, PaddingMode paddingMode)
 {
     XTEA xtea(key, 64);
-    return (EorD == 1) ? xtea.encrypt(data, len, result) : xtea.decrypt(data, len, result);
+    return (EorD == 1) ? xtea.encrypt(data, len, result, paddingMode) : xtea.decrypt(data, len, result, paddingMode);
 }
 
 }

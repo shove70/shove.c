@@ -998,19 +998,19 @@ int BigInt::jacobi(BigInt a, BigInt b)
         return (s * jacobi(b % a1, a1));
 }
 
-BigInt BigInt::genPseudoPrime(int bits, int confidence, Random &rnd)
+BigInt BigInt::genPseudoPrime(int bits, int confidence)
 {
     BigInt result;
     bool done = false;
 
     while (!done)
     {
-        result.genRandomBits(bits, rnd);
+        result.genRandomBits(bits);
 
         result.data[0] |= 0x01;        // make it odd
 
         // prime test
-        done = result.isProbablePrime(confidence, rnd);
+        done = result.isProbablePrime(confidence);
     }
 
     return result;
@@ -1456,7 +1456,7 @@ BigInt BigInt::gcd(const BigInt &bi)
     return g;
 }
 
-void BigInt::genRandomBits(int bits, Random &rnd)
+void BigInt::genRandomBits(int bits)
 {
     int dwords = bits >> 5;
     int remBits = bits & 0x1F;
@@ -1517,7 +1517,7 @@ int BigInt::bitCount()
     return bits;
 }
 
-bool BigInt::fermatLittleTest(int confidence, Random &rnd)
+bool BigInt::fermatLittleTest(int confidence)
 {
     BigInt thisVal;
 
@@ -1553,7 +1553,7 @@ bool BigInt::fermatLittleTest(int confidence, Random &rnd)
             // make sure "a" has at least 2 bits
             testBits = rnd.next(2, bits - 1);
 
-            a.genRandomBits(testBits, rnd);
+            a.genRandomBits(testBits);
 
             int byteLen = a.dataLength;
 
@@ -1583,7 +1583,7 @@ bool BigInt::fermatLittleTest(int confidence, Random &rnd)
     return true;
 }
 
-bool BigInt::rabinMillerTest(int confidence, Random &rnd)
+bool BigInt::rabinMillerTest(int confidence)
 {
     BigInt thisVal;
 
@@ -1639,7 +1639,7 @@ bool BigInt::rabinMillerTest(int confidence, Random &rnd)
 
             //make sure "a" has at least 2 bits
             testBits = rnd.next(2, bits - 1);
-            a.genRandomBits(testBits, rnd);
+            a.genRandomBits(testBits);
             int byteLen = a.dataLength;
 
             // make sure "a" is not 0
@@ -1677,7 +1677,7 @@ bool BigInt::rabinMillerTest(int confidence, Random &rnd)
     return true;
 }
 
-bool BigInt::solovayStrassenTest(int confidence, Random &rnd)
+bool BigInt::solovayStrassenTest(int confidence)
 {
     BigInt thisVal;
 
@@ -1717,7 +1717,7 @@ bool BigInt::solovayStrassenTest(int confidence, Random &rnd)
 
             testBits = rnd.next(2, bits - 1);
 
-            a.genRandomBits(testBits, rnd);
+            a.genRandomBits(testBits);
 
             int byteLen = a.dataLength;
 
@@ -1772,7 +1772,7 @@ bool BigInt::lucasStrongTest()
     return lucasStrongTestHelper(thisVal);
 }
 
-bool BigInt::isProbablePrime(int confidence, Random &rnd)
+bool BigInt::isProbablePrime(int confidence)
 {
     BigInt thisVal;
 
@@ -1796,7 +1796,7 @@ bool BigInt::isProbablePrime(int confidence, Random &rnd)
         }
     }
 
-    return (thisVal.rabinMillerTest(confidence, rnd));
+    return (thisVal.rabinMillerTest(confidence));
 }
 
 bool BigInt::isProbablePrime()
@@ -1901,14 +1901,14 @@ uint64 BigInt::longValue()
     return val;
 }
 
-BigInt BigInt::genCoPrime(int bits, Random &rnd)
+BigInt BigInt::genCoPrime(int bits)
 {
     bool done = false;
     BigInt result;
 
     while (!done)
     {
-        result.genRandomBits(bits, rnd);
+        result.genRandomBits(bits);
 
         // gcd test
         BigInt g = result.gcd(*this);

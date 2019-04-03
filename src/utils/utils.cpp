@@ -36,6 +36,8 @@ namespace shove
 namespace utils
 {
 
+Random rnd;
+
 void splitString(const string& str, vector<string>& result, const string& delimiter)
 {
     result.clear();

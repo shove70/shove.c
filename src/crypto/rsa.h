@@ -15,6 +15,7 @@ namespace crypto
 struct RSAKeyPair
 {
 public:
+
     string privateKey;
     string publicKey;
 
@@ -32,6 +33,7 @@ public:
 struct RSAKeyInfo
 {
 public:
+
     BigInt  modulus;
     BigInt  exponent;
 
@@ -49,6 +51,7 @@ public:
 class RSA
 {
 public:
+
     static RSAKeyPair generateKeyPair(uint);
     static string encodeKey(BigInt, BigInt);
     static RSAKeyInfo decodeKey(string const&);
@@ -58,6 +61,7 @@ public:
     static size_t decrypt(RSAKeyInfo, ubyte*, size_t, ubyte*, bool mixinXteaMode = false);
 
 private:
+
     static size_t encrypt_mixinXteaMode(RSAKeyInfo, ubyte*, size_t, ubyte*);
     static size_t decrypt_mixinXteaMode(RSAKeyInfo, ubyte*, size_t, ubyte*);
 

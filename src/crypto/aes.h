@@ -6,6 +6,7 @@
 #include "../utils/types.h"
 
 #include "common.h"
+#include "padding.h"
 
 using namespace std;
 
@@ -182,23 +183,9 @@ template<uint Nb, uint Nk, uint Nr>
 class AES
 {
 private:
+
     uint w[Nb * (Nr + 1)];
     uint dw[Nb * (Nr + 1)];
-
-    size_t padding(ubyte* input, size_t len, ubyte* output)
-    {
-        size_t output_len = len;
-        while ((output_len + 4) % 16 != 0) output_len++;
-
-        for (size_t i = 0; i < len; i++)
-            output[i] = input[i];
-        for (size_t i = len; i < output_len; i++)
-            output[i] = 0;
-
-        writeIntToBytes<uint>((uint)len, output + output_len, ENDIAN_BIG);
-
-        return output_len + 4;
-    }
 
     void keyExpansion(ubyte* key, size_t len)
     {
@@ -279,9 +266,9 @@ public:
         keyExpansion(key, len);
     }
 
-    size_t encrypt(ubyte* data, size_t len, ubyte* result)
+    size_t encrypt(ubyte* data, size_t len, ubyte* result, PaddingMode paddingMode = PaddingMode::NoPadding)
     {
-        size_t output_len = padding(data, len, result);
+        size_t output_len = Padding::padding(data, len, 16, result, paddingMode);
 
         for (size_t i = 0; i < output_len / 16; i++)
         {
@@ -322,7 +309,7 @@ public:
         return output_len;
     }
 
-    size_t decrypt(ubyte* data, size_t len, ubyte* result)
+    size_t decrypt(ubyte* data, size_t len, ubyte* result, PaddingMode paddingMode = PaddingMode::NoPadding)
     {
         assert(len % 16 == 0);
 
@@ -365,22 +352,7 @@ public:
             state[3] = isbox[(ubyte)(t[3])] ^ ((isbox[(ubyte)(t[2] >> 8)]) << 8) ^ ((isbox[(ubyte)(t[1] >> 16)]) << 16) ^ ((isbox[(ubyte)(t[0] >> 24)]) << 24) ^ dw[3];
         }
 
-        size_t result_len = readIntFromBytes<uint>(result + (len - 4), ENDIAN_BIG);
-
-        if ((result_len < 0) || (result_len > (len - 4)))
-        {
-            return 0;
-        }
-
-        for (size_t i = result_len; i < (len - 4); i++)
-        {
-            if (result[i] != 0)
-            {
-                return 0;
-            }
-        }
-
-        return result_len;
+        return Padding::unpadding(result, len, 16, paddingMode);
     }
 };
 
@@ -391,24 +363,26 @@ typedef AES<4, 8, 14> AES256;
 class AESUtils
 {
 public:
+
     template<typename AES_X = AES128>
-    static size_t encrypt(ubyte* data, size_t len, string key, ubyte* result)
+    static size_t encrypt(ubyte* data, size_t len, string key, ubyte* result, PaddingMode paddingMode = PaddingMode::NoPadding)
     {
-        return handle<AES_X, 1>(data, len, key, result);
+        return handle<AES_X, 1>(data, len, key, result, paddingMode);
     }
 
     template<class AES_X = AES128>
-    static size_t decrypt(ubyte* data, size_t len, string key, ubyte* result)
+    static size_t decrypt(ubyte* data, size_t len, string key, ubyte* result, PaddingMode paddingMode = PaddingMode::NoPadding)
     {
-        return handle<AES_X, 2>(data, len, key, result);
+        return handle<AES_X, 2>(data, len, key, result, paddingMode);
     }
 
 private:
+
     template<class AES_X, int EorD>
-    static size_t handle(ubyte* data, size_t len, string key, ubyte* result)
+    static size_t handle(ubyte* data, size_t len, string key, ubyte* result, PaddingMode paddingMode)
     {
         AES_X aes((ubyte*)key.c_str(), key.length());
-        return (EorD == 1) ? aes.encrypt(data, len, result) : aes.decrypt(data, len, result);
+        return (EorD == 1) ? aes.encrypt(data, len, result, paddingMode) : aes.decrypt(data, len, result, paddingMode);
     }
 };
 

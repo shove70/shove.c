@@ -5,8 +5,8 @@
 #include <sstream>
 
 #include "../text/regex.h"
-
 #include "types.h"
+#include "random.h"
 
 using namespace std;
 using namespace shove::regex;
@@ -15,6 +15,8 @@ namespace shove
 {
 namespace utils
 {
+
+extern Random rnd;
 
 void splitString(const string& str, vector<string>& result, const string& delimiter);
 

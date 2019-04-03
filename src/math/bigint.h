@@ -2,6 +2,7 @@
 
 #include "../utils/random.h"
 #include "../utils/types.h"
+#include "../utils/utils.h"
 
 using namespace shove::utils;
 
@@ -671,17 +672,17 @@ public:
     BigInt barrettReduction(BigInt x, BigInt n, BigInt constant);
 
     BigInt gcd(const BigInt &bi);
-    void genRandomBits(int bits, Random &rnd);
+    void genRandomBits(int bits);
     int bitCount();
-    bool fermatLittleTest(int confidence, Random &rnd);
-    bool rabinMillerTest(int confidence, Random &rnd);
-    bool solovayStrassenTest(int confidence, Random &rnd);
+    bool fermatLittleTest(int confidence);
+    bool rabinMillerTest(int confidence);
+    bool solovayStrassenTest(int confidence);
     bool lucasStrongTest();
-    bool isProbablePrime(int confidence, Random &rnd);
+    bool isProbablePrime(int confidence);
     bool isProbablePrime();
     int intValue();
     uint64 longValue();
-    BigInt genCoPrime(int bits, Random &rnd);
+    BigInt genCoPrime(int bits);
     BigInt modInverse(BigInt modulus);
     void setBit(uint bitNum);
     void unsetBit(uint bitNum);
@@ -720,7 +721,7 @@ public:
     friend BigInt operator ^(const BigInt& bi1, const BigInt& bi2);
 
     int jacobi(BigInt a, BigInt b);
-    BigInt genPseudoPrime(int bits, int confidence, Random &rnd);
+    BigInt genPseudoPrime(int bits, int confidence);
     BigInt* lucasSequence(BigInt P, BigInt Q, BigInt k, BigInt n);
     BigInt* lucasSequenceHelper(BigInt P, BigInt Q, BigInt k, BigInt n, BigInt constant, int s);
 
