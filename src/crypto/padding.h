@@ -183,7 +183,7 @@ public:
         {
             size_t result_len = readIntFromBytes<uint>(data + (len - 4), ENDIAN_BIG);
 
-            if ((result_len < 0) || (result_len > (len - 4)))
+            if ((result_len <= 0) || (result_len > (len - 4)))
             {
                 return 0;
             }
