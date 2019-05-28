@@ -183,16 +183,21 @@ public:
         {
             size_t result_len = readIntFromBytes<uint>(data + (len - 4), ENDIAN_BIG);
 
-            if ((result_len <= 0) || (result_len > (len - 4)))
+            if (result_len == 0)
             {
                 return 0;
+            }
+
+            if ((result_len <= 0) || (result_len > (len - 4)))
+            {
+                throw("Invalid parameter: data.");
             }
 
             for (size_t i = result_len; i < (len - 4); i++)
             {
                 if (data[i] != 0)
                 {
-                    return 0;
+                    throw("Invalid parameter: data.");
                 }
             }
 
