@@ -233,7 +233,7 @@ size_t RSA::encrypt_mixinXteaMode(RSAKeyInfo key, ubyte* data, size_t len, ubyte
     }
 
     block = new ubyte[len - blockSize + 8];
-    size_t remainder_len = XTEAUtils::encrypt(data + blockSize, len - blockSize, xteaKey, block, PaddingMode::ISO10126);
+    size_t remainder_len = XTEAUtils::encrypt(data + blockSize, len - blockSize, xteaKey, block, PaddingMode::Customized);
     for (size_t i = 0; i < remainder_len; i++)
     {
         result[pos++] = block[i];
@@ -337,7 +337,7 @@ size_t RSA::decrypt_mixinXteaMode(RSAKeyInfo key, ubyte* data, size_t len, ubyte
     }
 
     block = new ubyte[len - blockSize];
-    size_t remainder_len = XTEAUtils::decrypt(data + blockSize, len - blockSize, xteaKey, block, PaddingMode::ISO10126);
+    size_t remainder_len = XTEAUtils::decrypt(data + blockSize, len - blockSize, xteaKey, block, PaddingMode::Customized);
 
     for (size_t i = 0; i < remainder_len; i++)
     {

@@ -21,6 +21,8 @@ size_t Padding::padding(ubyte* input, size_t len, size_t blockSize, ubyte* outpu
             return PaddingPKCS7::padding(input, len, blockSize, output);
         case PaddingMode::Zeros:
             return PaddingZeros::padding(input, len, blockSize, output);
+        case PaddingMode::Customized:
+            return PaddingCustomized::padding(input, len, blockSize, output);
     }
 
     throw("Error Padding Mode.");
@@ -42,6 +44,8 @@ size_t Padding::unpadding(ubyte* data, size_t len, size_t blockSize, PaddingMode
             return PaddingPKCS7::unpadding(data, len, blockSize);
         case PaddingMode::Zeros:
             return PaddingZeros::unpadding(data, len, blockSize);
+        case PaddingMode::Customized:
+            return PaddingCustomized::unpadding(data, len, blockSize);
     }
 
     throw("Error Padding Mode.");

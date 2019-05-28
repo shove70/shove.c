@@ -6,6 +6,7 @@
 #include "../utils/types.h"
 #include "../utils/random.h"
 #include "../utils/utils.h"
+#include "common.h"
 
 using namespace std;
 using namespace shove::utils;
@@ -22,15 +23,16 @@ enum PaddingMode
     ISO10126,        // 0A EB 02 04 (Random + size)
     PKCS5,           // 04 04 04 04 (All size)
     PKCS7,           // 04 04 04 04 (All size)
-    Zeros            // 00 00 00 00 (All zero)
+    Zeros,           // 00 00 00 00 (All zero)
+    Customized       // 00 00 00 00 + (00 00 00 04) (Zero + Original size)
 };
 
-enum PaddingMode_Type
+enum PaddingStuff
 {
-    PaddingMode_Type_None, PaddingMode_Type_Zero, PaddingMode_Type_Random, PaddingMode_Type_Size
+    PaddingStuff_None, PaddingStuff_Zero, PaddingStuff_Random, PaddingStuff_Size, PaddingStuff_OriginalSize
 };
 
-template<PaddingMode_Type fill, PaddingMode_Type suffix>
+template<PaddingStuff fill, PaddingStuff suffix>
 class PaddingImpl
 {
 public:
@@ -42,12 +44,17 @@ public:
             throw("Invalid block size, which must be a multiple of 8.");
         }
 
+        if (!((suffix != PaddingStuff_OriginalSize) || (fill == PaddingStuff_Zero)))
+        {
+            throw("PaddingCustomized require: Zero + OriginalSize.");
+        }
+
         for (size_t i = 0; i < len; i++)
         {
             output[i] = input[i];
         }
 
-        if ((fill == PaddingMode_Type_None) || (suffix == PaddingMode_Type_None))
+        if ((fill == PaddingStuff_None) || (suffix == PaddingStuff_None))
         {
             if (!((len > 0) && (len % blockSize == 0)))
             {
@@ -56,7 +63,7 @@ public:
 
             return len;
         }
-        else
+        else if (suffix != PaddingStuff_OriginalSize)
         {
             size_t paddingSize = blockSize - len % blockSize;
             int index = (int)paddingSize - 1;
@@ -69,6 +76,20 @@ public:
             }
 
             return len + paddingSize;
+        }
+        else
+        {
+            size_t output_len = len;
+            while ((output_len + 4) % 8 != 0) output_len++;
+
+            for (size_t i = len; i < output_len; i++)
+            {
+                output[i] = 0;
+            }
+
+            writeIntToBytes<uint>((uint)len, output + output_len, ENDIAN_BIG);
+
+            return output_len + 4;
         }
     }
 
@@ -84,11 +105,16 @@ public:
             throw("Invalid data size, which must be a multiple of blockSize.");
         }
 
-        if ((fill == PaddingMode_Type_None) || (suffix == PaddingMode_Type_None))
+        if (!((suffix != PaddingStuff_OriginalSize) || (fill == PaddingStuff_Zero)))
+        {
+            throw("PaddingCustomized require: Zero + OriginalSize.");
+        }
+
+        if ((fill == PaddingStuff_None) || (suffix == PaddingStuff_None))
         {
             return len;
         }
-        else if ((fill == PaddingMode_Type_Zero) && (suffix == PaddingMode_Type_Size))
+        else if ((fill == PaddingStuff_Zero) && (suffix == PaddingStuff_Size))
         {
             size_t size = data[len - 1];
 
@@ -107,7 +133,7 @@ public:
 
             return len - size;
         }
-        else if ((fill == PaddingMode_Type_Random) && (suffix == PaddingMode_Type_Size))
+        else if ((fill == PaddingStuff_Random) && (suffix == PaddingStuff_Size))
         {
             size_t size = data[len - 1];
 
@@ -118,7 +144,7 @@ public:
 
             return len - size;
         }
-        else if ((fill == PaddingMode_Type_Size) && (suffix == PaddingMode_Type_Size))
+        else if ((fill == PaddingStuff_Size) && (suffix == PaddingStuff_Size))
         {
             size_t size = data[len - 1];
 
@@ -137,7 +163,7 @@ public:
 
             return len - size;
         }
-        else if ((fill == PaddingMode_Type_Zero) && (suffix == PaddingMode_Type_Zero))
+        else if ((fill == PaddingStuff_Zero) && (suffix == PaddingStuff_Zero))
         {
             if (!(data[len - 1] == 0))
             {
@@ -153,23 +179,42 @@ public:
 
             return index + 1;
         }
+        else if ((fill == PaddingStuff_Zero) && (suffix == PaddingStuff_OriginalSize))
+        {
+            size_t result_len = readIntFromBytes<uint>(data + (len - 4), ENDIAN_BIG);
+
+            if ((result_len < 0) || (result_len > (len - 4)))
+            {
+                return 0;
+            }
+
+            for (size_t i = result_len; i < (len - 4); i++)
+            {
+                if (data[i] != 0)
+                {
+                    return 0;
+                }
+            }
+
+            return result_len;
+        }
 
         throw("Error Padding Mode.");
     }
 
 private:
 
-    static void fillA(PaddingMode_Type type, ubyte* data, size_t index, size_t paddingSize)
+    static void fillA(PaddingStuff type, ubyte* data, size_t index, size_t paddingSize)
     {
         switch (type)
         {
-            case PaddingMode_Type_Zero:
+            case PaddingStuff_Zero:
                 data[index] = 0x00;
                 break;
-            case PaddingMode_Type_Random:
+            case PaddingStuff_Random:
                 data[index] = (ubyte)rnd.next();
                 break;
-            case PaddingMode_Type_Size:
+            case PaddingStuff_Size:
                 data[index] = (ubyte)paddingSize;
                 break;
             default:
@@ -178,12 +223,13 @@ private:
     }
 };
 
-typedef PaddingImpl<PaddingMode_Type_None,   PaddingMode_Type_None> PaddingNoPadding;
-typedef PaddingImpl<PaddingMode_Type_Zero,   PaddingMode_Type_Size> PaddingANSIX923;
-typedef PaddingImpl<PaddingMode_Type_Random, PaddingMode_Type_Size> PaddingISO10126;
-typedef PaddingImpl<PaddingMode_Type_Size,   PaddingMode_Type_Size> PaddingPKCS5;
-typedef PaddingImpl<PaddingMode_Type_Size,   PaddingMode_Type_Size> PaddingPKCS7;
-typedef PaddingImpl<PaddingMode_Type_Zero,   PaddingMode_Type_Zero> PaddingZeros;
+typedef PaddingImpl<PaddingStuff_None,   PaddingStuff_None>         PaddingNoPadding;
+typedef PaddingImpl<PaddingStuff_Zero,   PaddingStuff_Size>         PaddingANSIX923;
+typedef PaddingImpl<PaddingStuff_Random, PaddingStuff_Size>         PaddingISO10126;
+typedef PaddingImpl<PaddingStuff_Size,   PaddingStuff_Size>         PaddingPKCS5;
+typedef PaddingImpl<PaddingStuff_Size,   PaddingStuff_Size>         PaddingPKCS7;
+typedef PaddingImpl<PaddingStuff_Zero,   PaddingStuff_Zero>         PaddingZeros;
+typedef PaddingImpl<PaddingStuff_Zero,   PaddingStuff_OriginalSize> PaddingCustomized;   // For downward compatibility.
 
 class Padding
 {
