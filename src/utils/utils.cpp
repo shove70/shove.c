@@ -242,31 +242,27 @@ bool downloadFile(const string& url, const string& saveFilename)
     MultiByteToWideChar(CP_ACP, 0, url.c_str(), -1, ansi_url, len);
 
     len = MultiByteToWideChar(CP_ACP, 0, saveFilename.c_str(), -1, NULL, 0);
-    TCHAR* ansi_saveFilename = new TCHAR[len + 1 + 20];
+    TCHAR* ansi_saveFilename = new TCHAR[len + 1];
     memset(ansi_saveFilename, 0, len + 1);
     MultiByteToWideChar(CP_ACP, 0, saveFilename.c_str(), -1, ansi_saveFilename, len);
 
-    char* temp = ".tmp";
-    TCHAR wideTemp[20];
-    MultiByteToWideChar(CP_ACP, 0, temp, -1, wideTemp, 20);
-    memcpy(ansi_saveFilename + len, wideTemp, 20);
-    
-    int iLen = WideCharToMultiByte(CP_ACP, 0, ansi_saveFilename, -1, NULL, 0, NULL, NULL);
-    char* chRtn = new char[iLen + 1];
-    WideCharToMultiByte(CP_ACP, 0, ansi_saveFilename, -1, chRtn, iLen, NULL, NULL);
-    string tempfile(chRtn);
+    string tempfile = saveFilename + ".tmp";
+    len = MultiByteToWideChar(CP_ACP, 0, tempfile.c_str(), -1, NULL, 0);
+    TCHAR* ansi_tempfile = new TCHAR[len + 1];
+    memset(ansi_tempfile, 0, len + 1);
+    MultiByteToWideChar(CP_ACP, 0, tempfile.c_str(), -1, ansi_tempfile, len);
 
-    bool result = (URLDownloadToFile(0, ansi_url, ansi_saveFilename, 0, NULL) == S_OK);
+    bool result = (URLDownloadToFile(0, ansi_url, ansi_tempfile, 0, NULL) == S_OK);
 
     if (result && fileExists(tempfile) && (fileLength(tempfile) > 0))
     {
-        copyFile(tempfile, std::string(chRtn));
+        copyFile(tempfile, saveFilename);
         remove(tempfile.c_str());
     }
 
     delete[] ansi_url;
     delete[] ansi_saveFilename;
-    delete[] chRtn;
+    delete[] ansi_tempfile;
 
     return result;
 #else
