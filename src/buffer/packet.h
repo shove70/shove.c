@@ -262,22 +262,14 @@ public:
         bb.put<string>(name, false, true, 2);
         bb.put<string>(method, false, true, 2);
         Bitmanip::write<int>((int)(buffer.size() - 2 - 4 + en_len + 2), buffer, 2);
-
-        for (size_t i = 0; i < en_len; i++)
-        {
-            buffer.push_back(en[i]);
-        }
+        buffer.insert(buffer.end(), en, en + en_len);
 
         if (crypt != CryptType::NONE) delete[] en;
 
         string md5 = MD5Utils.GenerateMD5(buffer.data(), buffer.size());
         ubyte md5_buf[2];
         strToByte_hex(md5, md5_buf, 4);
-
-        for (int i = 0; i < 2; i++)
-        {
-            buffer.push_back(md5_buf[i]);
-        }
+        buffer.insert(buffer.end(), md5_buf, md5_buf + 2);
     }
 
     static size_t parseInfo(ubyte* buffer, size_t len, string& name, string& method);

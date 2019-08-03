@@ -142,14 +142,8 @@ long Client::receive(vector<unsigned char>& receiveBuffer, int timeout)
 
     receiveBuffer.clear();
     receiveBuffer.reserve(6 + size);
-    for (int i = 0; i < 6; i++)
-    {
-        receiveBuffer.push_back(buffer[i]);
-    }
-    for (int i = 0; i < size; i++)
-    {
-        receiveBuffer.push_back(data[i]);
-    }
+    receiveBuffer.insert(receiveBuffer.end(), buffer, buffer + 6);
+    receiveBuffer.insert(receiveBuffer.end(), data, data + size);
 
     delete[] data;
 

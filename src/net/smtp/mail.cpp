@@ -59,8 +59,7 @@ bool Mail::setmessage(const string& newmessage)
         return false;
 
     message.clear();
-    for (string::size_type i = 0; i < newmessage.length(); ++i)
-        message.push_back(newmessage[i]);
+    message.assign(newmessage.c_str(), newmessage.c_str() + newmessage.length());
 
     checkRFCcompat();
 
