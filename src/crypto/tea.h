@@ -37,7 +37,7 @@ public:
 
 private:
 
-    static size_t handle(ubyte* data, size_t len, int key[], ubyte* result, int EorD, PaddingMode paddingMode);
+    static size_t crypt(ubyte* data, size_t len, int key[], ubyte* result, int EorD, PaddingMode paddingMode);
 };
 
 
@@ -67,7 +67,7 @@ public:
 
 private:
 
-    static size_t handle(ubyte* data, size_t len, int key[], ubyte* result, int EorD, PaddingMode paddingMode);
+    static size_t crypt(ubyte* data, size_t len, int key[], ubyte* result, int EorD, PaddingMode paddingMode);
 };
 
 }

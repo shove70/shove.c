@@ -27,7 +27,7 @@ RSAKeyPair RSA::generateKeyPair(uint bitLength = 1024)
     q = q.genPseudoPrime(bitLength / 2, 40);
     n = p * q;
     t = (p - 1) * (q - 1);
-    e = Primes[(rnd.next() % 42) + 6500];
+    e = 65537;
 
     BigInt d = e.modInverse(t);
 

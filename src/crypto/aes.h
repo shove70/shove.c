@@ -282,6 +282,9 @@ public:
 
     ~AES()
     {
+        memset(w, 0, sizeof(w));
+        memset(dw, 0, sizeof(dw));
+
         if (m_ivFreeRequire)
         {
             delete[] m_iv;
@@ -415,19 +418,19 @@ public:
     template<typename AES_X = AES128>
     static size_t encrypt(ubyte* data, size_t len, string key, ubyte* result, ubyte* iv = NULL, PaddingMode paddingMode = PaddingMode::NoPadding)
     {
-        return handle<AES_X, 1>(data, len, key, result, iv, paddingMode);
+        return crypt<AES_X, 1>(data, len, key, result, iv, paddingMode);
     }
 
     template<class AES_X = AES128>
     static size_t decrypt(ubyte* data, size_t len, string key, ubyte* result, ubyte* iv = NULL, PaddingMode paddingMode = PaddingMode::NoPadding)
     {
-        return handle<AES_X, 2>(data, len, key, result, iv, paddingMode);
+        return crypt<AES_X, 2>(data, len, key, result, iv, paddingMode);
     }
 
 private:
 
     template<class AES_X, int EorD>
-    static size_t handle(ubyte* data, size_t len, string key, ubyte* result, ubyte* iv, PaddingMode paddingMode)
+    static size_t crypt(ubyte* data, size_t len, string key, ubyte* result, ubyte* iv, PaddingMode paddingMode)
     {
         AES_X aes((ubyte*)key.c_str(), key.length(), iv);
         return (EorD == 1) ? aes.encrypt(data, len, result, paddingMode) : aes.decrypt(data, len, result, paddingMode);

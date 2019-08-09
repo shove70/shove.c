@@ -75,15 +75,15 @@ size_t TEA::decrypt(ubyte* data, size_t len, ubyte* result, PaddingMode paddingM
 
 size_t TEAUtils::encrypt(ubyte* data, size_t len, int key[], ubyte* result, PaddingMode paddingMode)
 {
-    return handle(data, len, key, result, 1, paddingMode);
+    return crypt(data, len, key, result, 1, paddingMode);
 }
 
 size_t TEAUtils::decrypt(ubyte* data, size_t len, int key[], ubyte* result, PaddingMode paddingMode)
 {
-    return handle(data, len, key, result, 2, paddingMode);
+    return crypt(data, len, key, result, 2, paddingMode);
 }
 
-size_t TEAUtils::handle(ubyte* data, size_t len, int key[], ubyte* result, int EorD, PaddingMode paddingMode)
+size_t TEAUtils::crypt(ubyte* data, size_t len, int key[], ubyte* result, int EorD, PaddingMode paddingMode)
 {
     TEA tea(key);
     return (EorD == 1) ? tea.encrypt(data, len, result, paddingMode) : tea.decrypt(data, len, result, paddingMode);
@@ -157,15 +157,15 @@ size_t XTEA::decrypt(ubyte* data, size_t len, ubyte* result, PaddingMode padding
 
 size_t XTEAUtils::encrypt(ubyte* data, size_t len, int key[], ubyte* result, PaddingMode paddingMode)
 {
-    return handle(data, len, key, result, 1, paddingMode);
+    return crypt(data, len, key, result, 1, paddingMode);
 }
 
 size_t XTEAUtils::decrypt(ubyte* data, size_t len, int key[], ubyte* result, PaddingMode paddingMode)
 {
-    return handle(data, len, key, result, 2, paddingMode);
+    return crypt(data, len, key, result, 2, paddingMode);
 }
 
-size_t XTEAUtils::handle(ubyte* data, size_t len, int key[], ubyte* result, int EorD, PaddingMode paddingMode)
+size_t XTEAUtils::crypt(ubyte* data, size_t len, int key[], ubyte* result, int EorD, PaddingMode paddingMode)
 {
     XTEA xtea(key, 64);
     return (EorD == 1) ? xtea.encrypt(data, len, result, paddingMode) : xtea.decrypt(data, len, result, paddingMode);
