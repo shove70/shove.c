@@ -95,7 +95,7 @@ bool Socket::Connect(const string& host, unsigned short port)
     struct sockaddr_in  svraddr_4;
     struct sockaddr_in6 svraddr_6;
 
-    struct addrinfo *result = NULL;
+    struct addrinfo* result = NULL;
     error = getaddrinfo(host.c_str(), NULL, NULL, &result);
 
     if (error || !result)
@@ -103,7 +103,7 @@ bool Socket::Connect(const string& host, unsigned short port)
         return false;
     }
 
-    const struct sockaddr *sa = result->ai_addr;
+    const struct sockaddr* sa = result->ai_addr;
     socklen_t maxlen = 128;
 
     switch (sa->sa_family)
@@ -114,7 +114,7 @@ bool Socket::Connect(const string& host, unsigned short port)
             ret = false;
             break;
         }
-        if (!inet_ntop(AF_INET, &(((struct sockaddr_in *)sa)->sin_addr), ip, maxlen))
+        if (!inet_ntop(AF_INET, &(((struct sockaddr_in*)sa)->sin_addr), ip, maxlen))
         {
             ret = false;
             break;
@@ -131,7 +131,7 @@ bool Socket::Connect(const string& host, unsigned short port)
             ret = false;
             break;
         }
-        inet_ntop(AF_INET6, &(((struct sockaddr_in6 *)sa)->sin6_addr), ip, maxlen);
+        inet_ntop(AF_INET6, &(((struct sockaddr_in6*)sa)->sin6_addr), ip, maxlen);
         memset(&svraddr_6, 0, sizeof(svraddr_6));
         svraddr_6.sin6_family = AF_INET6;
         svraddr_6.sin6_port = htons(port);
@@ -162,19 +162,19 @@ bool Socket::Connect(const string& host, unsigned short port)
 
     int on = 1;
 #ifdef _WIN32
-    setsockopt(m_sock, IPPROTO_TCP, TCP_NODELAY, (const char *)&on, sizeof(on));
+    setsockopt(m_sock, IPPROTO_TCP, TCP_NODELAY, (const char*)&on, sizeof(on));
     int _timeout = timeout * 1000;
     //setsockopt(m_sock, SOL_SOCKET, SO_RCVTIMEO, (const char*)&_timeout, sizeof(int));
     setsockopt(m_sock, SOL_SOCKET, SO_SNDTIMEO, (const char*)&_timeout, sizeof(int));
 #else
-    setsockopt(m_sock, IPPROTO_TCP, TCP_NODELAY, (void *)&on, sizeof(on));
+    setsockopt(m_sock, IPPROTO_TCP, TCP_NODELAY, (void*)&on, sizeof(on));
     struct timeval _timeout = { timeout, 0 };
     //setsockopt(m_sock, SOL_SOCKET, SO_RCVTIMEO, (const char*)&_timeout, sizeof(_timeout));
     setsockopt(m_sock, SOL_SOCKET, SO_SNDTIMEO, (const char*)&_timeout, sizeof(_timeout));
 #endif
 #ifdef __APPLE__
     int set = 1;
-    setsockopt(m_sock, SOL_SOCKET, SO_NOSIGPIPE, (void *)&set, sizeof(int));
+    setsockopt(m_sock, SOL_SOCKET, SO_NOSIGPIPE, (void*)&set, sizeof(int));
 #endif
 #ifdef __linux
     signal(SIGPIPE, SIG_IGN);
@@ -203,16 +203,30 @@ long Socket::Send(const char* buf, long buflen)
         return -1;
     }
 
-    long sent = 0;
+    long sent = 0, len;
 
-    while (sent < buflen)
+    for (; sent < buflen; sent += len)
     {
-        long len = (long)send(m_sock, buf + sent, buflen - sent, 0);
-        if (len <= 0)
+        len = (long)send(m_sock, buf + sent, buflen - sent, 0);
+
+        if (len > 0)
         {
-            return len;
+            continue;
         }
-        sent += len;
+        else if (len == 0)
+        {
+            return sent;
+        }
+        else
+        {
+            if (errno == EINTR || errno == EAGAIN || errno == EWOULDBLOCK)
+            {
+                len = 0;
+                continue;
+            }
+
+            break;
+        }
     }
 
     return sent;
@@ -234,26 +248,41 @@ long Socket::Recv(char* buf, long buflen, int timeout)
     FD_ZERO(&fd);
     FD_SET(m_sock, &fd);
 
-    long receive = 0;
-    while (receive < buflen)
+    long received = 0, len = 0;
+
+    for (; received < buflen; received += len)
     {
         struct timeval val = { timeout, 0 };
-        int selret = select((int)m_sock + 1, &fd, NULL, NULL, (timeout == -1) ? NULL : &val);
+        int ret = select((int)m_sock + 1, &fd, NULL, NULL, (timeout == -1) ? NULL : &val);
 
-        if (selret <= 0)
+        if (ret <= 0)
         {
-            return selret;
+            return received; //ret;
         }
 
-        long len = (long)recv(m_sock, buf + receive, buflen - receive, 0);
-        if (len <= 0)
+        len = (long)recv(m_sock, buf + received, buflen - received, 0);
+
+        if (len > 0)
         {
-            return len;
+            continue;
         }
-        receive += len;
+        else if (len == 0)
+        {
+            break;
+        }
+        else
+        {
+            if (errno == EINTR || errno == EAGAIN || errno == EWOULDBLOCK)
+            {
+                len = 0;
+                continue;
+            }
+
+            break;
+        }
     }
 
-    return receive;
+    return received;
 }
 
 bool Socket::GetPeerName(string& ip, unsigned short &port)
